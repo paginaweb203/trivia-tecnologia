@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Trivia de Tecnología</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#f4f6fb;--card:#fff;--tx:#14213d;--mut:#5b6785;--pri:#3b5bdb;--ok:#2f9e44;--bad:#e03131;--bd:#dde3f0}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1424;--card:#18213a;--tx:#eef2ff;--mut:#9aa7c7;--pri:#748ffc;--ok:#51cf66;--bad:#ff6b6b;--bd:#2b3658}}
+:root[data-theme="dark"]{--bg:#0e1424;--card:#18213a;--tx:#eef2ff;--mut:#9aa7c7;--pri:#748ffc;--ok:#51cf66;--bad:#ff6b6b;--bd:#2b3658}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;min-height:100vh;display:flex;justify-content:center;padding:16px}
+main{width:100%;max-width:640px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:18px;padding:24px;margin-top:12px}
+h1{font-size:1.8rem;margin:0 0 6px}h2{margin:0 0 14px;font-size:1.3rem;line-height:1.35}
+p{color:var(--mut);line-height:1.5}
+input{width:100%;padding:12px;font-size:1rem;border-radius:10px;border:1px solid var(--bd);background:var(--bg);color:var(--tx);margin:10px 0}
+button{font:inherit;cursor:pointer}
+.btn{background:var(--pri);color:#fff;border:0;border-radius:10px;padding:12px 20px;font-weight:600;font-size:1rem}
+.btn.sec{background:transparent;color:var(--pri);border:1px solid var(--pri)}
+.opt{display:block;width:100%;text-align:left;padding:14px;margin:8px 0;border-radius:12px;border:2px solid var(--bd);background:var(--bg);color:var(--tx);font-size:1rem}
+.opt:hover:not(:disabled){border-color:var(--pri)}
+.opt.ok{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 18%,var(--bg))}
+.opt.bad{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 18%,var(--bg))}
+.top{display:flex;justify-content:space-between;font-size:.9rem;color:var(--mut);margin-bottom:8px}
+.bar{height:8px;background:var(--bd);border-radius:6px;overflow:hidden;margin-bottom:14px}
+.bar div{height:100%;background:var(--pri);width:100%;transition:width 1s linear}
+.cat{display:inline-block;font-size:.75rem;background:var(--pri);color:#fff;border-radius:20px;padding:3px 10px;margin-bottom:10px}
+.exp{margin-top:12px;font-size:.95rem}
+.big{font-size:3rem;font-weight:800;color:var(--pri);margin:6px 0}
+ol{padding-left:22px;line-height:1.8}
+.row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.hide{display:none}
+body{background:radial-gradient(ellipse at top,#16224a,#070b17 70%) fixed}
+#bg{position:fixed;inset:0;z-index:-1}
+h1{background:linear-gradient(90deg,#22d3ee,#a78bfa);-webkit-background-clip:text;background-clip:text;color:transparent}
+.card{background:rgba(18,26,50,.7);backdrop-filter:blur(10px);box-shadow:0 0 30px rgba(34,211,238,.12);border-color:rgba(34,211,238,.3);animation:in .4s ease}
+@keyframes in{from{opacity:0;transform:translateY(12px)}}
+.ico{width:130px;height:130px;margin:0 auto 10px;filter:drop-shadow(0 0 14px rgba(34,211,238,.5));animation:fl 3s ease-in-out infinite}
+.ico svg{width:100%;height:100%}
+@keyframes fl{50%{transform:translateY(-8px) rotate(3deg)}}
+.opt{transition:transform .15s,box-shadow .15s}.opt:hover:not(:disabled){transform:translateX(6px);box-shadow:0 0 14px rgba(34,211,238,.35)}
+.opt.bad{animation:sh .35s}@keyframes sh{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.big{text-shadow:0 0 20px var(--pri)}
+#mute{position:fixed;top:calc(12px + env(safe-area-inset-top,0px));right:12px;padding:6px 12px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important}}
+.lv{flex:1;min-width:200px;opacity:.55;text-align:center}.lv small{font-weight:400;opacity:.9}.lv.on{opacity:1;box-shadow:0 0 18px var(--pri);outline:2px solid #fff}
+h3{margin:14px 0 0}
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas><button id="mute" class="btn sec">🔊</button>
+<main>
+<h1>💻 Trivia de Tecnología</h1>
+<p>Semana de la Ciencia · Centro de Informática e Idiomas</p>
+
+<section id="home" class="card">
+  <div class="ico" id="homeIco"></div>
+  <h2>¡Pon a prueba tu tecnología!</h2>
+  <p>Elige tu nivel. Cada partida tiene 5 preguntas al azar de un banco de 30. Mientras más rápido respondas, más puntos ganas.</p>
+  <div class="row"><button class="btn lv on" data-l="facil">🟢 Fácil · Secundaria<br><small>20 s por pregunta</small></button><button class="btn lv" data-l="dificil">🔴 Difícil · Universitarios y docentes<br><small>30 s por pregunta</small></button></div>
+  <input id="name" placeholder="Tu nombre" maxlength="24" autocomplete="off">
+  <div class="row"><button class="btn" id="start">Comenzar</button><button class="btn sec" id="showRank">Ver ranking</button></div>
+</section>
+
+<section id="game" class="card hide">
+  <div class="top"><span id="prog"></span><span id="score"></span></div>
+  <div class="bar"><div id="fill"></div></div>
+  <div class="ico" id="ico"></div>
+  <span class="cat" id="cat"></span>
+  <h2 id="q"></h2>
+  <div id="opts"></div>
+  <div class="exp" id="exp"></div>
+  <div class="row"><button class="btn hide" id="next">Siguiente</button></div>
+</section>
+
+<section id="end" class="card hide">
+  <h2 id="who"></h2>
+  <div class="big" id="final"></div>
+  <p id="msg"></p>
+  <h2 id="rkt">🏆 Ranking</h2>
+  <ol id="rank"></ol>
+  <div class="row"><button class="btn" id="again">Nuevo participante</button></div>
+</section>
+
+<section id="rankOnly" class="card hide">
+  <h2>🏆 Ranking</h2>
+  <h3>🟢 Fácil</h3><ol id="rank2"></ol><h3>🔴 Difícil</h3><ol id="rank3"></ol>
+  <div class="row"><button class="btn sec" id="back">Volver</button><button class="btn sec" id="reset">Borrar ranking</button></div>
+</section>
+</main>
+
+<script>
+const ICONS=['<defs><clipPath id="cj"><circle cx="60" cy="60" r="44"/></clipPath></defs><circle cx="60" cy="60" r="44" fill="#d9a066"/><g clip-path="url(#cj)"><rect y="35" width="120" height="10" fill="#b9773e"/><rect y="55" width="120" height="12" fill="#f0c493"/><rect y="78" width="120" height="9" fill="#b9773e"/></g><ellipse cx="78" cy="68" rx="9" ry="5" fill="#c0392b"/>', '<rect x="22" y="22" width="76" height="76" rx="14" fill="#fbbf24"/><text x="60" y="76" font-size="42" font-weight="800" text-anchor="middle" fill="#7c4a03" font-family="sans-serif">Au</text><text x="30" y="38" font-size="12" fill="#7c4a03">79</text>', '<g fill="#e5e7eb" stroke="#94a3b8" stroke-width="3"><rect x="34" y="52" width="52" height="16" rx="6" transform="rotate(-35 60 60)"/><circle cx="76" cy="38" r="8"/><circle cx="87" cy="52" r="8"/><circle cx="34" cy="68" r="8"/><circle cx="44" cy="83" r="8"/></g>', '<circle cx="60" cy="60" r="40" fill="#2563eb"/><path d="M30 50q15-14 30-4t30 4" fill="none" stroke="#4ade80" stroke-width="8"/><circle cx="60" cy="60" r="52" fill="none" stroke="#22d3ee" stroke-width="3" stroke-dasharray="6 6"/><text x="60" y="80" font-size="22" font-weight="700" text-anchor="middle" fill="#fff" font-family="sans-serif">N₂</text>', '<polygon points="60,25 95,90 25,90" fill="none" stroke="#fff" stroke-width="3"/><line x1="5" y1="62" x2="48" y2="62" stroke="#fff" stroke-width="3"/><g stroke-width="4"><line x1="72" y1="62" x2="115" y2="42" stroke="#f87171"/><line x1="73" y1="68" x2="115" y2="62" stroke="#fbbf24"/><line x1="74" y1="74" x2="115" y2="82" stroke="#4ade80"/><line x1="75" y1="80" x2="115" y2="102" stroke="#60a5fa"/></g>', '<circle cx="60" cy="60" r="46" fill="none" stroke="#a78bfa" stroke-width="4"/><text x="60" y="68" font-size="26" font-weight="800" text-anchor="middle" fill="#fff" font-family="serif">E=mc²</text><ellipse cx="60" cy="60" rx="56" ry="18" fill="none" stroke="#22d3ee" stroke-width="2" transform="rotate(-30 60 60)"/>', '<g fill="none" stroke="#f9a8d4" stroke-width="4" stroke-linecap="round"><path d="M30 70q0-40 30-40t30 40"/><path d="M40 78q-4-34 20-34t20 34"/><path d="M50 86q-6-26 10-26t10 26"/><path d="M60 94V74"/></g>', '<g fill="none" stroke-width="5" stroke-linecap="round"><path d="M40 15c60 25-60 65 40 90" stroke="#22d3ee"/><path d="M80 15c-60 25 60 65-40 90" stroke="#f472b6"/></g><g stroke="#e2e8f0" stroke-width="3"><line x1="52" y1="35" x2="68" y2="35"/><line x1="48" y1="60" x2="72" y2="60"/><line x1="52" y1="85" x2="68" y2="85"/></g>', '<rect x="12" y="28" width="96" height="64" rx="10" fill="#0f172a" stroke="#22d3ee" stroke-width="3"/><text x="60" y="68" font-size="30" font-weight="800" text-anchor="middle" fill="#22d3ee" font-family="monospace">&lt;/&gt;</text>', '<rect x="12" y="28" width="96" height="64" rx="10" fill="#0f172a" stroke="#4ade80" stroke-width="3"/><text x="60" y="68" font-size="30" font-weight="800" text-anchor="middle" fill="#4ade80" font-family="monospace">0 1</text>', '<g fill="none" stroke="#38bdf8" stroke-width="3"><circle cx="60" cy="60" r="44"/><ellipse cx="60" cy="60" rx="18" ry="44"/><line x1="16" y1="60" x2="104" y2="60"/><path d="M22 38h76M22 82h76"/></g>', '<circle cx="85" cy="35" r="16" fill="#fbbf24"/><g fill="none" stroke="#38bdf8" stroke-width="6" stroke-linecap="round"><path d="M10 70q12-14 25 0t25 0 25 0 25 0"/><path d="M10 90q12-14 25 0t25 0 25 0 25 0"/></g>', '<rect x="50" y="15" width="20" height="62" rx="10" fill="#e2e8f0"/><circle cx="60" cy="86" r="16" fill="#ef4444"/><rect x="56" y="30" width="8" height="52" fill="#ef4444"/><text x="96" y="50" font-size="16" font-weight="700" fill="#fff" font-family="sans-serif" text-anchor="middle">100°</text>', '<circle cx="60" cy="60" r="44" fill="#c1440e"/><circle cx="45" cy="48" r="8" fill="#9a3412"/><circle cx="72" cy="70" r="11" fill="#9a3412"/><circle cx="62" cy="38" r="5" fill="#9a3412"/>'].map(x=>`<svg viewBox="0 0 120 120">${x}</svg>`);
+$h=()=>document.getElementById("homeIco").innerHTML=ICONS[8];
+const cv=document.getElementById("bg"),cx=cv.getContext("2d");let W,H,P=[],M={x:-999,y:-999};
+function rs(){W=cv.width=innerWidth;H=cv.height=innerHeight;P=Array.from({length:Math.min(90,W*H/14000|0)},()=>({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.6,vy:(Math.random()-.5)*.6}))}
+addEventListener("resize",rs);addEventListener("pointermove",e=>{M.x=e.clientX;M.y=e.clientY});rs();
+(function loop(){cx.clearRect(0,0,W,H);for(const p of P){p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>W)p.vx*=-1;if(p.y<0||p.y>H)p.vy*=-1;cx.fillStyle="#22d3ee";cx.beginPath();cx.arc(p.x,p.y,1.8,0,7);cx.fill()}
+for(let a=0;a<P.length;a++){for(let b=a+1;b<P.length;b++){const d=Math.hypot(P[a].x-P[b].x,P[a].y-P[b].y);if(d<120){cx.strokeStyle=`rgba(34,211,238,${.35*(1-d/120)})`;cx.beginPath();cx.moveTo(P[a].x,P[a].y);cx.lineTo(P[b].x,P[b].y);cx.stroke()}}
+const m=Math.hypot(P[a].x-M.x,P[a].y-M.y);if(m<160){cx.strokeStyle=`rgba(167,139,250,${.6*(1-m/160)})`;cx.beginPath();cx.moveTo(P[a].x,P[a].y);cx.lineTo(M.x,M.y);cx.stroke()}}
+requestAnimationFrame(loop)})();
+let snd=true,AC;function beep(f,d=.15,t="sine"){if(!snd)return;try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();const o=AC.createOscillator(),g=AC.createGain();o.type=t;o.frequency.value=f;g.gain.value=.08;o.connect(g);g.connect(AC.destination);o.start();o.stop(AC.currentTime+d)}catch(e){}}
+const sOk=()=>{beep(660);setTimeout(()=>beep(880),120)},sBad=()=>beep(180,.3,"sawtooth");
+document.getElementById("mute").onclick=e=>{snd=!snd;e.target.textContent=snd?"🔊":"🔇"};
+$h();
+</script>
+<script>
+const BANKS={facil:[
+["Hardware","¿Qué dispositivo usas para escribir en una computadora?","Teclado",["Monitor","Parlante","Impresora"],"Las teclas envían letras y números al computador."],
+["Hardware","¿Qué dispositivo muestra las imágenes de la computadora?","Monitor",["Teclado","Mouse","Parlante"],"También se le llama pantalla."],
+["Hardware","¿Qué dispositivo sirve para mover el cursor en la pantalla?","Mouse",["Parlante","Impresora","Monitor"],"En español también se le dice ratón."],
+["Hardware","¿Cuál es el cerebro de la computadora?","El procesador (CPU)",["El monitor","El teclado","El parlante"],"Ejecuta todas las instrucciones y cálculos."],
+["Hardware","¿Para qué sirve una impresora?","Para imprimir en papel",["Para escuchar música","Para conectarse a internet","Para cargar el celular"],"Convierte documentos digitales en hojas impresas."],
+["Hardware","¿Qué necesita un celular para funcionar sin estar enchufado?","Batería",["Antena","Cámara","Altavoz"],"Se recarga conectándola a la corriente."],
+["Internet","¿Para qué sirve un navegador como Chrome o Firefox?","Para ver páginas de internet",["Para escribir cartas","Para editar videos","Para imprimir fotos"],"También se llama browser."],
+["Internet","¿Cuál de estos es un buscador de internet?","Google",["Word","Paint","Excel"],"Escribes lo que buscas y te muestra resultados."],
+["Internet","¿Qué símbolo lleva siempre un correo electrónico?","@ (arroba)",["# (numeral)","& (ampersand)","% (porcentaje)"],"Separa el nombre de usuario del dominio, como en nombre@correo.com."],
+["Internet","¿Cuál de estas es una red social?","TikTok",["Excel","Calculadora","Paint"],"Las redes sociales conectan a personas por internet."],
+["Internet","¿Para qué sirve el Wi-Fi?","Para conectar dispositivos a internet sin cables",["Para cargar la batería","Para imprimir documentos","Para borrar archivos"],"El router envía la señal por ondas de radio."],
+["Internet","¿Cuál de estas aplicaciones sirve para hacer videollamadas?","Zoom",["Paint","Calculadora","Bloc de notas"],"Meet, Teams y WhatsApp también permiten videollamadas."],
+["Programación","¿Con qué lenguaje se crea la estructura de una página web?","HTML",["Word","Paint","Excel"],"¡Esta trivia está hecha con HTML!"],
+["Programación","¿Qué es un programa informático?","Un conjunto de instrucciones que le dice a la computadora qué hacer",["Un cable especial","Una pieza de la pantalla","Un tipo de memoria USB"],"Las apps de tu celular son programas."],
+["Programación","¿Qué es un bug en programación?","Un error en el programa",["Un virus informático","Un tipo de pantalla","Un lenguaje antiguo"],"Corregir bugs se llama depurar."],
+["Programación","¿Qué lenguaje de programación lleva nombre de una serpiente?","Python",["Cobra","Ruby","Viper"],"Su nombre viene del grupo cómico Monty Python."],
+["Programación","¿Qué herramienta usa bloques de colores para aprender a programar?","Scratch",["Excel","Paint","Word"],"Con ella puedes crear juegos y animaciones."],
+["Programación","¿Qué es un algoritmo?","Una serie de pasos ordenados para resolver un problema",["Un tipo de virus","Una pieza del computador","Un juego en línea"],"Una receta de cocina es un algoritmo cotidiano."],
+["Ciberseguridad","¿Cuál de estas contraseñas es la más segura?","Mx7#qL92!pTv",["123456","password","micontraseña"],"Mezcla mayúsculas, minúsculas, números y símbolos."],
+["Ciberseguridad","¿Debes compartir tu contraseña con tus amigos?","No, es personal y secreta",["Sí, con todos","Sí, si son de mi salón","Solo con desconocidos"],"Nadie serio te la pedirá, ni siquiera un amigo."],
+["Ciberseguridad","¿Cómo se llama el engaño por mensaje para robar tus datos?","Phishing",["Hosting","Streaming","Gaming"],"Desconfía de enlaces urgentes que piden tus claves."],
+["Ciberseguridad","¿Qué programa ayuda a proteger tu equipo contra virus?","Antivirus",["Paint","Bloc de notas","Reproductor de música"],"Debe mantenerse actualizado."],
+["Ciberseguridad","Un desconocido te escribe diciendo que ganaste un premio y te pide tus datos. ¿Qué haces?","No respondo y lo bloqueo",["Le envío mis datos","Le doy mi contraseña","Se lo cuento a todos para que participen"],"Los premios falsos son una estafa muy común."],
+["IA","¿Qué significan las siglas IA?","Inteligencia Artificial",["Internet Avanzado","Información Automática","Interfaz Analógica"],"Son sistemas que realizan tareas que requieren inteligencia humana."],
+["IA","¿Cuál de estos es un ejemplo de inteligencia artificial?","Un asistente que responde preguntas por voz",["Un cable USB","Un teclado","Una pantalla apagada"],"Siri, Alexa o el Asistente de Google usan IA."],
+["IA","¿Qué es un robot?","Una máquina programada para realizar tareas",["Un tipo de virus","Un lenguaje de programación","Una página web"],"Hay robots en fábricas, hospitales y hasta en casas."],
+["Sistemas","¿Cuál de estos es un sistema operativo de celulares?","Android",["Excel","Chrome","WhatsApp"],"El otro gran sistema móvil es iOS."],
+["Sistemas","¿Qué atajo de teclado copia el texto seleccionado?","Ctrl + C",["Ctrl + V","Ctrl + X","Ctrl + Z"],"Ctrl + V pega, Ctrl + X corta y Ctrl + Z deshace."],
+["Sistemas","¿Qué empresa creó el iPhone?","Apple",["Samsung","Nokia","Microsoft"],"Se presentó en 2007."],
+["Sistemas","¿Qué es la nube (cloud)?","Servidores en internet donde se guardan archivos y programas",["Un tipo de antivirus","Un cable de red muy largo","Una pantalla especial"],"Te permite acceder a tus archivos desde cualquier dispositivo."]
+],dificil:[
+["Algoritmos","¿Cuál es la complejidad temporal de la búsqueda binaria?","O(log n)",["O(n)","O(n²)","O(1)"],"Reduce a la mitad el espacio de búsqueda en cada paso."],
+["Algoritmos","¿Cuál es la complejidad promedio de QuickSort?","O(n log n)",["O(n²)","O(log n)","O(n)"],"Su peor caso es O(n²) con pivotes mal elegidos."],
+["Algoritmos","¿Qué algoritmo halla caminos más cortos desde un nodo en grafos con pesos no negativos?","Dijkstra",["Kruskal","Floyd-Warshall","Bellman-Ford"],"Usa una cola de prioridad para explorar el nodo más cercano."],
+["Algoritmos","¿Cuál es el clásico problema NP-completo demostrado por Cook y Levin?","Satisfacibilidad booleana (SAT)",["Ordenamiento burbuja","Búsqueda lineal","Suma de dos enteros"],"Fue el primer problema probado NP-completo, en 1971."],
+["Programación","¿Qué paradigma promueve funciones puras y evita el estado mutable?","Programación funcional",["Programación orientada a eventos","Programación ensambladora","Programación secuencial"],"Lenguajes como Haskell lo aplican de forma estricta."],
+["Programación","¿Qué principio SOLID indica que una clase debe tener una única razón para cambiar?","Responsabilidad única (SRP)",["Abierto/cerrado (OCP)","Sustitución de Liskov (LSP)","Inversión de dependencias (DIP)"],"Hace el código más cohesivo y fácil de mantener."],
+["Programación","¿Qué hace un recolector de basura (garbage collector)?","Libera la memoria de objetos que ya no tienen referencias",["Borra archivos temporales del disco","Comprime el código fuente","Elimina procesos zombis"],"Lo usan lenguajes como Java, C# y Go."],
+["Programación","¿Qué estructura de datos sigue el principio LIFO?","Pila (stack)",["Cola (queue)","Árbol binario","Tabla hash"],"El último en entrar es el primero en salir."],
+["Programación","En Git, ¿qué comando integra otra rama creando un commit de fusión?","git merge",["git fetch","git stash","git blame"],"git rebase, en cambio, reescribe el historial."],
+["Programación","¿Qué significan las siglas REST en el diseño de APIs?","Representational State Transfer",["Remote Execution Service Tool","Relational Entity Storage Type","Rapid Embedded Software Test"],"Fue definido por Roy Fielding en su tesis del año 2000."],
+["Hardware","¿Qué arquitectura de CPU domina en teléfonos móviles y en los chips Apple M?","ARM",["x86","MIPS","SPARC"],"Destaca por su eficiencia energética."],
+["Hardware","¿Qué ley predijo que el número de transistores de un chip se duplica aproximadamente cada dos años?","Ley de Moore",["Ley de Amdahl","Ley de Metcalfe","Ley de Kepler"],"Gordon Moore la enunció en 1965."],
+["Hardware","¿Cuál es la memoria más rápida de un computador?","Los registros de la CPU",["La memoria RAM","El disco SSD","La memoria caché L3"],"Están dentro del procesador y se acceden en un ciclo."],
+["Hardware","¿Qué nivel RAID realiza espejo (mirroring) de los discos?","RAID 1",["RAID 0","RAID 5","RAID 6"],"Cada dato se escribe idéntico en dos discos."],
+["Internet","¿Cuántos bits tiene una dirección IPv6?","128",["32","64","256"],"IPv4 usa 32 bits y se está agotando."],
+["Internet","¿En qué capa del modelo OSI opera el protocolo IP?","Capa 3 (red)",["Capa 2 (enlace)","Capa 4 (transporte)","Capa 7 (aplicación)"],"Se encarga del direccionamiento y enrutamiento."],
+["Internet","¿Qué protocolo garantiza entrega confiable y ordenada de datos?","TCP",["UDP","ICMP","ARP"],"Usa confirmaciones y retransmisiones."],
+["Internet","¿Qué puerto usa por defecto el protocolo HTTPS?","443",["80","21","25"],"HTTP usa el puerto 80."],
+["Internet","¿Qué función cumple NAT en un router?","Traduce direcciones IP privadas a públicas",["Cifra todo el tráfico","Asigna nombres de dominio","Comprime paquetes"],"Permite que muchos equipos compartan una IP pública."],
+["Ciberseguridad","¿Qué ataque inserta código malicioso en consultas a una base de datos mediante formularios?","Inyección SQL",["Ataque de fuerza bruta","Man-in-the-middle","Ransomware"],"Se previene con consultas parametrizadas."],
+["Ciberseguridad","¿Cuál de estos algoritmos de cifrado es asimétrico?","RSA",["AES","DES","Blowfish"],"Usa un par de claves: pública y privada."],
+["Ciberseguridad","¿Qué función hash se considera criptográficamente rota?","MD5",["SHA-256","SHA-3","bcrypt"],"Se pueden generar colisiones con facilidad."],
+["Ciberseguridad","¿En qué consiste un ataque DDoS?","Saturar un servicio con tráfico desde muchas fuentes",["Robar contraseñas por correo","Cifrar archivos para pedir rescate","Escuchar una red Wi-Fi"],"Busca dejar el servicio inaccesible."],
+["IA","¿Qué arquitectura introdujo el mecanismo de atención y es base de los LLM actuales?","Transformer",["Red convolucional (CNN)","Perceptrón simple","Máquina de Boltzmann"],"Se presentó en el artículo Attention Is All You Need (2017)."],
+["IA","¿Cómo se llama el algoritmo que calcula gradientes hacia atrás para entrenar redes neuronales?","Retropropagación (backpropagation)",["Descenso por clustering","Validación cruzada","Búsqueda en anchura"],"Aplica la regla de la cadena capa por capa."],
+["IA","¿En qué consiste el aprendizaje por refuerzo?","Un agente aprende por recompensas al interactuar con un entorno",["Aprender solo con datos etiquetados","Agrupar datos sin etiquetas","Memorizar todo el conjunto de datos"],"AlphaGo es un ejemplo famoso."],
+["IA","¿Qué técnica reduce el sobreajuste apagando neuronas al azar durante el entrenamiento?","Dropout",["Batch normalization","Early stopping","Data augmentation"],"Fuerza a la red a no depender de neuronas concretas."],
+["Sistemas","¿Qué es un interbloqueo (deadlock)?","Procesos que esperan recursos retenidos por otros y ninguno avanza",["Un proceso que usa toda la CPU","Una pérdida de memoria","Un error de compilación"],"Requiere espera circular, exclusión mutua, retención y no apropiación."],
+["Sistemas","¿Qué kernel creó Linus Torvalds en 1991?","Linux",["Darwin","NT","Minix"],"Hoy impulsa servidores, Android y supercomputadoras."],
+["Sistemas","¿Qué tecnología permite ejecutar varios sistemas operativos aislados en un mismo hardware?","Virtualización",["Multitarea cooperativa","Paginación","Overclocking"],"La gestiona un hipervisor como KVM o Hyper-V."]
+]};
+const CI={"Hardware":15,"Internet":10,"Programación":8,"Ciberseguridad":16,"IA":17,"Sistemas":9,"Algoritmos":14};
+ICONS.push('<svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="46" fill="none" stroke="#a78bfa" stroke-width="4"/><text x="60" y="80" font-size="54" font-weight="800" text-anchor="middle" fill="#fff" font-family="serif">∑</text></svg>');
+ICONS.push('<svg viewBox="0 0 120 120"><rect x="34" y="34" width="52" height="52" rx="8" fill="#0f172a" stroke="#22d3ee" stroke-width="4"/><rect x="48" y="48" width="24" height="24" fill="#22d3ee"/><path d="M44 20v14M60 20v14M76 20v14M44 86v14M60 86v14M76 86v14M20 44h14M20 60h14M20 76h14M86 44h14M86 60h14M86 76h14" stroke="#22d3ee" stroke-width="4" stroke-linecap="round"/></svg>','<svg viewBox="0 0 120 120"><rect x="30" y="52" width="60" height="46" rx="8" fill="#4ade80"/><path d="M42 52V40a18 18 0 0 1 36 0v12" fill="none" stroke="#4ade80" stroke-width="7"/><circle cx="60" cy="72" r="7" fill="#052e16"/><rect x="57" y="74" width="6" height="14" fill="#052e16"/></svg>','<svg viewBox="0 0 120 120"><path d="M25 35L60 25L95 35M25 35L60 60L95 35M25 85L60 60L95 85M25 85L60 95L95 85M25 35V85M95 35V85M60 25V95" stroke="#a78bfa" stroke-width="3" fill="none"/><g fill="#22d3ee"><circle cx="25" cy="35" r="9"/><circle cx="60" cy="25" r="9"/><circle cx="95" cy="35" r="9"/><circle cx="60" cy="60" r="11"/><circle cx="25" cy="85" r="9"/><circle cx="95" cy="85" r="9"/><circle cx="60" cy="95" r="9"/></g></svg>');
+const LN={facil:"🟢 Fácil",dificil:"🔴 Difícil"};
+const $=id=>document.getElementById(id);
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+const show=id=>["home","game","end","rankOnly"].forEach(s=>$(s).classList.toggle("hide",s!==id));
+let T=20,level="facil",qs,i,score,right,left,timer,name;
+
+function load(l){try{return JSON.parse(localStorage.getItem("trivia_rank_"+l)||"[]")}catch(e){return (window._rk&&window._rk[l])||[]}}
+function save(l,r){window._rk=window._rk||{};window._rk[l]=r;try{localStorage.setItem("trivia_rank_"+l,JSON.stringify(r))}catch(e){}}
+function paintRank(el,l){const r=load(l);el.innerHTML=r.length?r.map(x=>`<li><b></b> — ${x.s} pts (${x.c}/5)</li>`).join(""):"<li>Aún no hay participantes.</li>";
+  el.querySelectorAll("b").forEach((b,k)=>b.textContent=r[k].n)}
+
+document.querySelectorAll(".lv").forEach(b=>b.onclick=()=>{level=b.dataset.l;document.querySelectorAll(".lv").forEach(x=>x.classList.toggle("on",x===b))});
+$("start").onclick=()=>{name=$("name").value.trim()||"Anónimo";T=level==="facil"?20:30;qs=shuffle(BANKS[level]).slice(0,5);i=0;score=0;right=0;show("game");ask()};
+function ask(){
+  const d=qs[i];$("prog").textContent=`${LN[level]} · Pregunta ${i+1} de 5`;$("score").textContent=`Puntos: ${score}`;
+  $("cat").textContent=d[0];$("ico").innerHTML=ICONS[CI[d[0]]];$("q").textContent=d[1];$("exp").textContent="";$("next").classList.add("hide");
+  $("opts").innerHTML="";
+  shuffle([d[2],...d[3]]).forEach(t=>{const b=document.createElement("button");b.className="opt";b.textContent=t;b.onclick=()=>answer(t,b);$("opts").appendChild(b)});
+  left=T;const f=$("fill");f.style.transition="none";f.style.width="100%";void f.offsetWidth;f.style.transition="width 1s linear";
+  clearInterval(timer);timer=setInterval(()=>{left--;f.style.width=(left/T*100)+"%";if(left<=0)answer(null)},1000);
+}
+function answer(t,btn){
+  clearInterval(timer);const d=qs[i];
+  document.querySelectorAll(".opt").forEach(b=>{b.disabled=true;if(b.textContent===d[2])b.classList.add("ok")});
+  if(t===d[2]){sOk();right++;score+=(level==="facil"?100:150)+Math.max(left,0)*5;$("exp").textContent="✅ ¡Correcto! "+d[4]}
+  else{sBad();if(btn)btn.classList.add("bad");$("exp").textContent=(t===null?"⏰ Se acabó el tiempo. ":"❌ Incorrecto. ")+d[4]}
+  $("score").textContent=`Puntos: ${score}`;
+  $("next").textContent=i===4?"Ver resultado":"Siguiente";$("next").classList.remove("hide");
+}
+$("next").onclick=()=>{i++;i<5?ask():finish()};
+function finish(){
+  const r=load(level);r.push({n:name,s:score,c:right});r.sort((a,b)=>b.s-a.s);save(level,r.slice(0,10));
+  $("who").textContent=`¡Bien hecho, ${name}!`;$("final").textContent=score+" pts";
+  $("msg").textContent=`Nivel ${LN[level]}: acertaste ${right} de 5. `+(right>=5?"¡Eres un crack de la tecnología! 🚀":right>=4?"¡Muy buen nivel! 👏":right>=2?"Vas por buen camino, ¡sigue explorando! 🔭":"¡La tecnología se aprende preguntando! 🌱");
+  $("rkt").textContent="🏆 Ranking "+LN[level];paintRank($("rank"),level);show("end");
+}
+$("again").onclick=()=>{$("name").value="";show("home")};
+$("showRank").onclick=()=>{paintRank($("rank2"),"facil");paintRank($("rank3"),"dificil");show("rankOnly")};
+$("back").onclick=()=>show("home");
+$("reset").onclick=()=>{if(confirm("¿Borrar todo el ranking?")){save("facil",[]);save("dificil",[]);paintRank($("rank2"),"facil");paintRank($("rank3"),"dificil")}};
+$("name").addEventListener("keydown",e=>{if(e.key==="Enter")$("start").click()});
+</script>
+</body>
+</html>
